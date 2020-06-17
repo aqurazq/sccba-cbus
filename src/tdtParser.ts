@@ -43,7 +43,7 @@ class TdtDocumentSymbolProvider implements DocumentSymbolProvider {
 }
 
 const diagnosticTdt = (document: TextDocument,collection: DiagnosticCollection): void => {
-    let diag1: Diagnostic = new Diagnostic(
+    /*let diag1: Diagnostic = new Diagnostic(
         new Range(
             new Position(3, 4), new Position(3, 12),
         ),
@@ -56,7 +56,7 @@ const diagnosticTdt = (document: TextDocument,collection: DiagnosticCollection):
             new Range(new Position(2, 4), new Position(2, 5))),
         '第一次赋值')];
     diag1.code = 102;
-    collection.set(document.uri,[diag1]); 
+    collection.set(document.uri,[diag1]); */
 }
 
 export {

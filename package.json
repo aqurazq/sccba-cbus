@@ -20,12 +20,14 @@
 				"id" : "TDT",
 				"aliases": [
 					"TDT"
-				]
+				],
+				"configuration": "./tdt-configuration.json"
 			}, {
 				"id": "TFT",
 				"aliases": [
 					"TFT"
-				]
+				],
+				"configuration": "./tft-configuration.json"
 			}
 		],
 		"grammars": [
