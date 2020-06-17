@@ -1,0 +1,12 @@
+# Compiled js file
+*.js
+
+# Log file
+*.log
+
+# Package Files #
+*.vsix
+
+
+/node_modules
+/out
