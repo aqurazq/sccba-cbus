@@ -42,21 +42,33 @@ class TdtDocumentSymbolProvider implements DocumentSymbolProvider {
     
 }
 
-const diagnosticTdt = (document: TextDocument,collection: DiagnosticCollection): void => {
-    /*let diag1: Diagnostic = new Diagnostic(
-        new Range(
-            new Position(3, 4), new Position(3, 12),
-        ),
-        '循环变量重复赋值',
-        DiagnosticSeverity.Error,
-    );
-    diag1.source = 'basic-lint';
-    diag1.relatedInformation = [new DiagnosticRelatedInformation(
-        new Location(document.uri,
-            new Range(new Position(2, 4), new Position(2, 5))),
-        '第一次赋值')];
-    diag1.code = 102;
-    collection.set(document.uri,[diag1]); */
+const diagnosticTdt = async (document: TextDocument,collection: DiagnosticCollection) => {
+    let prevLine:string = "",currentLine:string = "";
+    let r: Diagnostic[] = [];
+    for(let i = 0; i < document.lineCount; i++) {
+        if(i !== 0) {
+            prevLine = currentLine;
+        }
+        currentLine = document.lineAt(i).text;
+        if(!currentLine.startsWith("TX=")) {
+            const parts: string[] = currentLine.split(",");
+            if(parts.length !== 10) {
+                let eleNumDiag = new Diagnostic(
+                    new Range(
+                        new Position(i,0), new Position(i,currentLine.trim().length)
+                    ),
+                    'The number of TDT configuration items is incorrect.',
+                    DiagnosticSeverity.Error
+                );
+                r.push(eleNumDiag);
+            }
+        }
+    }
+    if(r.length > 0) {
+        collection.set(document.uri,r);
+    } else {
+        collection.clear();
+    }
 }
 
 export {

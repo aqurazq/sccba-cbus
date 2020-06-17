@@ -3,6 +3,16 @@
 import * as vscode from 'vscode';
 import { TdtFoldingRangeProvider, TdtDocumentSymbolProvider, diagnosticTdt } from './tdtParser';
 
+const diagnosticLanguage = (document: vscode.TextDocument,collection: vscode.DiagnosticCollection) : void => {
+    switch(document.languageId){
+        case "TDT":
+            diagnosticTdt(document, collection);
+            break;
+        default:
+            break;
+    }
+}
+
 export function activate(context: vscode.ExtensionContext) {
     const tdtSel:vscode.DocumentSelector = { scheme: 'file', language: 'TDT' };
     const cbusBaseDir = vscode.workspace.getConfiguration().get<string>("cbus.basedir");
@@ -15,17 +25,21 @@ export function activate(context: vscode.ExtensionContext) {
         tdtSel, new TdtDocumentSymbolProvider()
     ));
     
-    const diag_coll = vscode.languages.createDiagnosticCollection('tdt');
+    const tdtDiagnosticCollection = vscode.languages.createDiagnosticCollection('tdt');
 
     if (vscode.window.activeTextEditor) {
-        diagnosticTdt(vscode.window.activeTextEditor.document, diag_coll);
+        const document: vscode.TextDocument = vscode.window.activeTextEditor.document;
+        diagnosticLanguage(document,tdtDiagnosticCollection);
     }
 
-    context.subscriptions.push(vscode.window.onDidChangeActiveTextEditor(
-        (e: vscode.TextEditor | undefined) => {
-            if (e !== undefined) {
-                diagnosticTdt(e.document, diag_coll);
+    context.subscriptions.push(vscode.window.onDidChangeActiveTextEditor((e: vscode.TextEditor | undefined) => {
+        if (e !== undefined) {
+            diagnosticLanguage(e.document, tdtDiagnosticCollection);
         }
+    }));
+
+    context.subscriptions.push(vscode.workspace.onDidChangeTextDocument((e: vscode.TextDocumentChangeEvent) => {
+        diagnosticLanguage(e.document, tdtDiagnosticCollection);
     }));
 }
 
